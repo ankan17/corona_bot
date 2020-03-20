@@ -1,11 +1,13 @@
 import requests
 import datetime
+import os
 from bs4 import BeautifulSoup
 from tinydb import TinyDB, Query
 from notifier import send_notification
 
 
-db = TinyDB('database.json')
+dir = os.path.dirname(os.path.realpath(__file__))
+db = TinyDB(os.path.join(dir, 'database.json'))
 
 try:
     html_doc = requests.get("https://www.mohfw.gov.in/").text
@@ -64,9 +66,9 @@ try:
 
     if message:
         message = '\n'.join(message)
-        with open('log.txt', 'a') as f:
+        with open(os.path.join(dir, 'log.txt'), 'a') as f:
             f.write(f"\n{datetime.datetime.now()}:\n{message}\n")
         send_notification(message)
 except Exception as e:
-    with open('log.txt', 'a') as f:
+    with open(os.path.join(dir, 'log.txt'), 'a') as f:
         f.write(f"\n{datetime.datetime.now()}:\n{e}\n")
