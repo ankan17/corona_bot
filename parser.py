@@ -23,27 +23,31 @@ try:
         matches = db.search(State.name == state)
         if matches:
             match = matches[0]
-            updated = False
+            updated, obj = False, {"name": state}
             tot_old, fr_old, rec_old, died_old = match["total_cases"], \
                 match["foreign_nationals"], match["recovered"], match["died"]
             if tot_old != tot:
                 match["total_cases"] = tot
                 updated = True
+                obj["tot_old"] = tot_old
+                obj["tot_new"] = tot
             if fr_old != fr:
                 match["foreign_nationals"] = fr
                 updated = True
+                obj["fr_old"] = fr_old
+                obj["fr_new"] = fr
             if rec_old != rec:
                 match["recovered"] = rec
                 updated = True
+                obj["rec_old"] = rec_old
+                obj["rec_new"] = rec
             if died_old != died:
                 match["died"] = died
                 updated = True
+                obj["died_old"] = died_old
+                obj["died_new"] = died
             if updated:
-                updations.append({
-                    "name": state,
-                    "from": [tot_old, fr_old, rec_old, died_old],
-                    "to": [tot, fr, rec, died]
-                })
+                updations.append(obj)
                 db.update(match, State.name == state)
         else:
             db.insert({
@@ -55,14 +59,24 @@ try:
             })
             insertions.append({
                 "name": state,
-                "to": [tot, fr, rec, died]
+                "tot": tot,
+                "fr": fr,
+                "rec": rec,
+                "died": died
             })
 
     message = []
     for data in updations:
-        message.append(f"Data for {data['name']} updated: [{' '.join(data['from'])}] -> [{' '.join(data['to'])}]")  # noqa
+        if "tot_old" in data:
+            message.append("- Total number of case(s) in %s changed from %s to %s" % (data['name'], data['tot_old'], data['tot_new']))  # noqa
+        if "fr_old" in data:
+            message.append("- Number of foreign foreign national(s) affected in %s changed from %s to %s" % (data['name'], data['tot_old'], data['tot_new']))  # noqa
+        if "rec_old" in data:
+            message.append("- %d patient(s) recovered in %s" % (int(data['rec_old'])-int(data['rec_new'])), data['state'])  # noqa
+        if "died_old" in data:
+            message.append("- %d patient(s) died in %s" % (int(data['rec_old'])-int(data['rec_new'])), data['state'])  # noqa
     for data in insertions:
-        message.append(f"New data for {data['name']} added: [{' '.join(data['to'])}]")  # noqa
+        message.append("- New data for %s added: %s total case(s), %s case(s) of foreign nationals, %s patients and %s patients died" % (data['name'], data['tot'], data['fr'], data['rec'], data['died']))  # noqa
 
     if message:
         message = '\n'.join(message)
