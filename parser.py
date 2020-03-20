@@ -82,6 +82,7 @@ try:
         message = '\n'.join(message)
         with open(os.path.join(dir, 'log.txt'), 'a') as f:
             f.write(f"\n{datetime.datetime.now()}:\n{message}\n")
+        print(message)
         send_notification(message)
 except Exception as e:
     with open(os.path.join(dir, 'log.txt'), 'a') as f:
