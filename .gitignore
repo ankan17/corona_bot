@@ -1,0 +1,4 @@
+.env
+database.json
+log.txt
+__pycache__/
