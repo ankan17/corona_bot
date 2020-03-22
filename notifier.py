@@ -1,16 +1,15 @@
 import telegram
-import datetime
-from telegram.error import NetworkError, Unauthorized
 from decouple import config
+from logger import logger
 
 
 def send_notification(message):
     bot = telegram.Bot(config('BOT_TOKEN'))
     try:
         bot.send_message(config('GROUP_ID'), message)
-    except (NetworkError, Unauthorized) as e:
-        with open('log.txt', 'a') as f:
-            f.write(f"\n{datetime.datetime.now()}:\n{e}\n")
+        logger.info("Message sent successfully")
+    except Exception as e:
+        logger.error(e)
 
 
 if __name__ == "__main__":

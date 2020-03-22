@@ -1,9 +1,9 @@
 import requests
-import datetime
 import os
 from bs4 import BeautifulSoup
 from tinydb import TinyDB, Query
 from notifier import send_notification
+from logger import logger
 
 
 dir = os.path.dirname(os.path.realpath(__file__))
@@ -15,7 +15,12 @@ try:
 
     updations, insertions = [], []
     rows = soup.find_all('tr')[1:-1]
+except Exception as e:
+    logger.error(e)  # Error in accessing the webpage
 
+
+updations, insertions = [], []
+try:
     for row in rows:
         _, state, tot, fr, rec, died = map(lambda x: x.get_text(), row.find_all('td'))  # noqa
 
@@ -80,10 +85,10 @@ try:
 
     if message:
         message = '\n'.join(message)
-        with open(os.path.join(dir, 'log.txt'), 'a') as f:
-            f.write(f"\n{datetime.datetime.now()}:\n{message}\n")
+        logger.info("\n" + message)
         print(message)
         send_notification(message)
+    else:
+        logger.info("No new updates")
 except Exception as e:
-    with open(os.path.join(dir, 'log.txt'), 'a') as f:
-        f.write(f"\n{datetime.datetime.now()}:\n{e}\n")
+    logger.error(e)  # Error in parsing
