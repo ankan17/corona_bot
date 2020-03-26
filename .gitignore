@@ -1,4 +1,5 @@
 .env
-database.json
+india_database.json
+world_database.json
 log.txt
 __pycache__/

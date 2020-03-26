@@ -7,7 +7,7 @@ from logger import logger
 
 
 dir = os.path.dirname(os.path.realpath(__file__))
-db = TinyDB(os.path.join(dir, 'database.json'))
+db = TinyDB(os.path.join(dir, 'india_database.json'))
 
 try:
     html_doc = requests.get("https://www.mohfw.gov.in/").text
@@ -113,6 +113,6 @@ try:
         print(message)
         send_notification(message)
     else:
-        logger.info("No new updates")
+        logger.info("No new updates from India")
 except Exception as e:
     logger.error(e)  # Error in parsing
