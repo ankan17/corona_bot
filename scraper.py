@@ -80,18 +80,18 @@ try:
             )
         if "fr_old" in data:
             message.append(
-                "- Number of foreign foreign national(s) affected in %s changed from %s to %s" %  # noqa
+                "- Number of foreign national(s) affected in %s changed from %s to %s" %  # noqa
                 (data['name'], data['fr_old'], data['fr_new'])
             )
         if "rec_old" in data:
             message.append(
                 "- %d patient(s) recovered in %s" %
-                (int(data['rec_old'])-int(data['rec_new'])), data['state']
+                (int(data['rec_old'])-int(data['rec_new']), data['name'])
             )
         if "died_old" in data:
             message.append(
                 "- %d patient(s) died in %s" %
-                (int(data['died_old'])-int(data['died_new'])), data['state']
+                (int(data['died_old'])-int(data['died_new']), data['name'])
             )
     for data in insertions:
         new_message = "- New data for %s added: " % (data['name'])
